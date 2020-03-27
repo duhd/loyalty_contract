@@ -212,32 +212,70 @@ contract WalletBusiness is Owned {
     function getDebitHistoryLength() view public returns (uint) {
         return walletHistoryCtx.getDebitHistoryIdxLength();
     }
-    
     // CALL - Lấy lịch sử giao dịch DEBIT theo TRACE_NO
     function getDebitHistoryByTxRef(bytes32 _txRef) view public returns (bytes32, bytes32, int, uint, uint){
         return walletHistoryCtx.getDebitHistoryByTxRef(_txRef);
     }
+    // CALL - Đếm và Cộng gd Debit trong khoảng thời gian
+    function getCountAndSumDebit(uint _from_timestamp, uint _to_timestamp) view public returns(int, int){
+         return walletHistoryCtx.countAndSumDebit(_from_timestamp, _to_timestamp);
+    }
+    // CALL - Lấy lịch sử giao dịch DEBIT theo thời gian
+    function getDebitHistoryByTime(uint _from_timestamp, uint _to_timestamp) view public returns(bytes32[] memory, bytes32[] memory, int[] memory, uint[] memory){
+        return walletHistoryCtx.txsDebit(_from_timestamp, _to_timestamp);
+    }
+
 
     // CALL - Lấy số lượng lịch sử giao dịch CREDIT
     function getCreditHistoryLength() view public returns (uint) {
         return walletHistoryCtx.getCreditHistoryIdxLength();
     }
-    
     // CALL - Lấy lịch sử giao dịch CREDIT theo TRACE_NO
     function getCreditHistoryByTxRef(bytes32 _txRef) view public returns (bytes32, bytes32, int, uint, uint){
         return walletHistoryCtx.getCreditHistoryByTxRef(_txRef);
     }
-    
+    // CALL - Đếm và Cộng gd CREDIT trong khoảng thời gian
+    function getCountAndSumCredit(uint _from_timestamp, uint _to_timestamp) view public returns(int, int){
+         return walletHistoryCtx.countAndSumCredit(_from_timestamp, _to_timestamp);
+    }
+    // CALL - Lấy lịch sử giao dịch CREDIT theo thời gian
+    function getCreditHistoryByTime(uint _from_timestamp, uint _to_timestamp) view public returns(bytes32[] memory, bytes32[] memory, int[] memory, uint[] memory){
+        return walletHistoryCtx.txsCredit(_from_timestamp, _to_timestamp);
+    }
+
     // CALL - Lấy số lượng lịch sử giao dịch TRANSFER
     function getTransferHistoryLength() view public returns (uint) {
         return walletHistoryCtx.getTransferHistoryIdxLength();
     }
-
     // CALL - Lấy lịch sử giao dịch TRANSFER theo TRACE_NO  
     function getTransferHistoryByTxRef(bytes32 _txRef) view public returns (bytes32, bytes32, int, uint, uint){
         return walletHistoryCtx.getTransferHistoryByTxRef(_txRef);
     }
+    // CALL - Đếm và Cộng gd TRANSFER trong khoảng thời gian
+    function getCountAndSumTransfer(uint _from_timestamp, uint _to_timestamp) view public returns(int, int){
+         return walletHistoryCtx.countAndSumTransfer(_from_timestamp, _to_timestamp);
+    }
+    // CALL - Lấy lịch sử giao dịch TRANSFER theo thời gian
+    function getTransferHistoryByTime(uint _from_timestamp, uint _to_timestamp) view public returns(bytes32[] memory, bytes32[] memory, bytes32[] memory, int[] memory, uint[] memory){
+        return walletHistoryCtx.txsTransfer(_from_timestamp, _to_timestamp);
+    }
     
+    // CALL - Lấy số lượng lịch sử giao dịch REVERT
+    function getRevertHistoryLength() view public returns (uint) {
+        return walletHistoryCtx.getRevertHistoryIdxLength();
+    }
+    // CALL - Lấy lịch sử giao dịch REVERT theo TRACE_NO
+    function getRevertHistoryByTxRef(bytes32 _txRef) view public returns (bytes32, uint, uint){
+        return walletHistoryCtx.getRevertHistoryByTxRef(_txRef);
+    }
+    // CALL - Đếm và Cộng gd REVERT trong khoảng thời gian
+    function getCountAndSumRevert(uint _from_timestamp, uint _to_timestamp) view public returns(int, int){
+         return walletHistoryCtx.countAndSumRevert(_from_timestamp, _to_timestamp);
+    }
+    // CALL - Lấy lịch sử giao dịch REVERT theo thời gian
+    function getRevertHistoryByTime(uint _from_timestamp, uint _to_timestamp) view public returns(bytes32[] memory, bytes32[] memory, int[] memory, uint[] memory){
+        return walletHistoryCtx.txsRevert(_from_timestamp, _to_timestamp);
+    }
 
 
 // TXS - Đăng ký Acc ETH
