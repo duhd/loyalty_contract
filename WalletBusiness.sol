@@ -14,7 +14,7 @@ import "./InterfaceWalletHistory.sol";
 
 
 contract WalletBusiness is Owned {
-    event ErrorOccurred(string code, bytes32 txRef);
+    event ErrorOccurred(string code, string message, bytes32 txRef);
     address walletStorageCtx_addr;
     address walletHistoryCtx_addr;
     InterfaceWalletStorage walletStorageCtx;
@@ -65,9 +65,9 @@ contract WalletBusiness is Owned {
     function createStash(bytes32 _txRef, bytes32 _nameStash, int8 _typeStash, int8 _stateStash, int8 _levelStash, uint _createTime) onlyMember public
     {
         if (walletHistoryCtx.isCreateStashHistory(_txRef)) {
-            emit ErrorOccurred('ERR471', _txRef); //'DA TON TAI GIAO DICH TAO ACC VOI TRACE_ID NAY'
+            emit ErrorOccurred('ERR471', 'DA TON TAI GIAO DICH TAO ACC VOI TRACE_ID NAY', _txRef); //
         } else if (walletStorageCtx.isStashRegistry(_nameStash)) {
-            emit ErrorOccurred('ERR473', _txRef); //'TAI KHOAN DA TON TAI'
+            emit ErrorOccurred('ERR473', 'TAI KHOAN DA TON TAI', _txRef); //
         } else {
             address addrStash = address(new WalletStash(_nameStash));
             WalletStash newStashCtx = WalletStash(addrStash);
@@ -101,7 +101,7 @@ contract WalletBusiness is Owned {
     function updateStash(bytes32 _txRef, bytes32 _nameStash, int8 _typeStash, int8 _stateStash, int8 _levelStash) onlyMember public
     {
         if (!walletStorageCtx.isStashRegistry(_nameStash)) {
-            emit ErrorOccurred('ERR404', _txRef); //'TAI KHOAN KHONG TON TAI'
+            emit ErrorOccurred('ERR404', 'TAI KHOAN KHONG TON TAI', _txRef); //
         } else {       
             WalletStash stashCtx = WalletStash(walletStorageCtx.getStashRegistry(_nameStash));
             if (_typeStash > 0) stashCtx.setType(_typeStash); //nếu tham số vào <= 0 nghĩa là không thay đổi
@@ -115,15 +115,15 @@ contract WalletBusiness is Owned {
     function credit(bytes32 _txRef, bytes32 _nameStash, int _amount, uint _timestamp_offchain) onlyMember public
     {   
         if (walletHistoryCtx.isCreditHistory(_txRef)) {
-            emit ErrorOccurred('ERR471', _txRef); // 'GIAO DICH CREDIT CO TRACE_ID NAY DA TON TAI',
+            emit ErrorOccurred('ERR471', 'GIAO DICH CREDIT CO TRACE_ID NAY DA TON TAI', _txRef); // 
         } else if (!walletStorageCtx.isStashRegistry(_nameStash)) {
-            emit ErrorOccurred('ERR404', _txRef); //'TAI KHOAN KHONG TON TAI',
+            emit ErrorOccurred('ERR404', 'TAI KHOAN KHONG TON TAI', _txRef); //
         } else {
             WalletStash stashCtx = WalletStash(walletStorageCtx.getStashRegistry(_nameStash));
             if (stashCtx.getState() != 1) {
-                 emit ErrorOccurred('ERR472', _txRef);//'TAI KHOAN KHONG O TRANG THAI ACTIVE',
+                 emit ErrorOccurred('ERR472', 'TAI KHOAN KHONG O TRANG THAI ACTIVE', _txRef);//
             } else if (_amount <= 0) {
-                 emit ErrorOccurred('ERR461', _txRef); //'AMOUNT PHAI > 0',
+                 emit ErrorOccurred('ERR461', 'AMOUNT PHAI > 0', _txRef); //
             } else {
                 stashCtx.credit(_amount);
                 uint timestamp = now;
@@ -136,17 +136,17 @@ contract WalletBusiness is Owned {
     function debit(bytes32 _txRef, bytes32 _nameStash, int _amount, uint _timestamp_offchain) onlyMember public
     {   
         if (walletHistoryCtx.isDebitHistory(_txRef)) {
-            emit ErrorOccurred('ERR471', _txRef); // 'GIAO DICH DEBIT CO TRACE_ID NAY DA TON TAI',
+            emit ErrorOccurred('ERR471', 'GIAO DICH DEBIT CO TRACE_ID NAY DA TON TAI', _txRef); // 
         } else if (!walletStorageCtx.isStashRegistry(_nameStash)) {
-            emit ErrorOccurred('ERR404', _txRef); //'TAI KHOAN KHONG TON TAI',
+            emit ErrorOccurred('ERR404', 'TAI KHOAN KHONG TON TAI', _txRef); //
         } else {
             WalletStash stashCtx = WalletStash(walletStorageCtx.getStashRegistry(_nameStash));
             if (stashCtx.getState() != 1) {
-                 emit ErrorOccurred('ERR472', _txRef); //'TAI KHOAN KHONG O TRANG THAI ACTIVE',
+                 emit ErrorOccurred('ERR472', 'TAI KHOAN KHONG O TRANG THAI ACTIVE', _txRef); //
             } else if (stashCtx.getBalance() < _amount) {
-                 emit ErrorOccurred('ERR473', _txRef); //'TAI KHOAN KHONG DU SO DU DE THUC HIEN',
+                 emit ErrorOccurred('ERR473', 'TAI KHOAN KHONG DU SO DU DE THUC HIEN',  _txRef); //
             } else if (_amount <= 0) {
-                 emit ErrorOccurred('ERR461', _txRef); //'AMOUNT PHAI > 0',
+                 emit ErrorOccurred('ERR461', 'AMOUNT PHAI > 0', _txRef); //
             } else {
                 stashCtx.safe_debit(_amount);
                 uint timestamp = now;
@@ -160,22 +160,22 @@ contract WalletBusiness is Owned {
     function transfer(bytes32 _txRef, bytes32 _sender, bytes32 _receiver, int _amount, uint _timestamp_offchain) onlyMember public
     {   
         if (walletHistoryCtx.isTransferHistory(_txRef)) {
-            emit ErrorOccurred('ERR471', _txRef);
+            emit ErrorOccurred('ERR471', 'GIAO DICH TRANSFER CO TRACE_ID NAY DA TON TAI', _txRef);
         } else if (!walletStorageCtx.isStashRegistry(_sender)) {
-            emit ErrorOccurred('ERR404', _txRef); //'TAI KHOAN SENDER KHONG TON TAI',
+            emit ErrorOccurred('ERR404', 'TAI KHOAN SENDER KHONG TON TAI', _txRef); //
         } else if (!walletStorageCtx.isStashRegistry(_receiver)) {
-            emit ErrorOccurred('ERR404', _txRef); //'TAI KHOAN RECEIVER KHONG TON TAI',
+            emit ErrorOccurred('ERR404', 'TAI KHOAN RECEIVER KHONG TON TAI', _txRef); //
         } else {
             WalletStash senderStash = WalletStash(walletStorageCtx.getStashRegistry(_sender));
             WalletStash receiverStash = WalletStash(walletStorageCtx.getStashRegistry(_receiver));
             if (senderStash.getState() != 1) {
-                 emit ErrorOccurred('ERR472', _txRef); //'TAI KHOAN SENDER KHONG O TRANG THAI ACTIVE',
+                 emit ErrorOccurred('ERR472', 'TAI KHOAN SENDER KHONG O TRANG THAI ACTIVE', _txRef); //
             } else if (receiverStash.getState() != 1) {
-                 emit ErrorOccurred('ERR472', _txRef); //'TAI KHOAN RECEIVER KHONG O TRANG THAI ACTIVE',
+                 emit ErrorOccurred('ERR472', 'TAI KHOAN RECEIVER KHONG O TRANG THAI ACTIVE', _txRef); //
             } else if (senderStash.getBalance() < _amount) {
-                 emit ErrorOccurred('ERR473', _txRef); //'TAI KHOAN SENDER KHONG DU SO DU DE THUC HIEN',
+                 emit ErrorOccurred('ERR473', 'TAI KHOAN SENDER KHONG DU SO DU DE THUC HIEN', _txRef); //
             } else if (_amount <= 0) {
-                 emit ErrorOccurred('ERR461',_txRef); //'AMOUNT PHAI > 0', 
+                 emit ErrorOccurred('ERR461', 'AMOUNT PHAI > 0', _txRef); //
             } else {
                 senderStash.safe_debit(_amount);
                 receiverStash.credit(_amount);
@@ -188,9 +188,9 @@ contract WalletBusiness is Owned {
     // TXS - Đảo giao dịch chuyển điểm
     function revert_txs(bytes32 _txRef, bytes32 _txRef_org, uint _timestamp_offchain_org) onlyMember public{
         if (walletHistoryCtx.isRevertHistory(_txRef)) {
-            emit ErrorOccurred('ERR471', _txRef); // 'GIAO DICH REVERT CO TRACE_ID NAY DA TON TAI',
+            emit ErrorOccurred('ERR471', 'GIAO DICH REVERT CO TRACE_ID NAY DA TON TAI', _txRef); // 
         } else if (!walletHistoryCtx.isTransferHistory(_txRef_org)) {
-            emit ErrorOccurred('ERR404',  _txRef_org);//'GIAO DICH TRANSFER CO TRACE_ID NAY KHONG TON TAI',
+            emit ErrorOccurred('ERR404', 'GIAO DICH TRANSFER CO TRACE_ID NAY KHONG TON TAI',  _txRef_org);//
         } else {
             bytes32 sender_org;
             bytes32 receiver_org;
